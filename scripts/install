@@ -1,0 +1,28 @@
+source scripts/tools
+
+console:title 'Check requirements'
+
+function infrastructure:unsuported()
+{
+	echo 'Os $OSTYPE is not supported'
+}
+
+function infrastructure:install()
+{
+	if [[ "$OSTYPE" == "linux-gnu" ]]; then infrastructure:install:macos
+    elif [[ "$OSTYPE" == "darwin"* ]]; then infrastructure:install:linux
+    else infrastructure:unsuported
+    fi
+}
+
+function infrastructure:install:macos()
+{
+	check:tool:required gcloud "Please install Gcloud SDK -- https://cloud.google.com/sdk/downloads"
+    sudo apt-get -y install terraform
+}
+
+function infrastructure:install:linux()
+{
+    check:tool:required gcloud "Please install Gcloud SDK -- https://cloud.google.com/sdk/downloads"
+    brew install terraform
+}

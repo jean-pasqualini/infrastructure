@@ -1,0 +1,37 @@
+source scripts/tools
+
+console:title 'Infrastructure IC Manager'
+
+if [ -z "$GOOGLE_APPLICATION_CREDENTIALS" ]; then
+	console:error "GOOGLE_APPLICATION_CREDENTIALS is not setted"
+	exit:error
+fi
+
+TF_VAR_credentials=$GOOGLE_APPLICATION_CREDENTIALS
+TF_DIRECTORY=terraform/ic
+
+export \
+	TF_VAR_credentials \
+	TF_DIRECTORY \
+	TF_VAR_project_name
+
+if ! which terraform 1> /dev/null; then
+  console:error "terraform' is not installed or not in your PATH"
+  exit 2
+fi
+
+function infrastructure:ic:spawn()
+{
+	echo '--> Spawn IC'
+	pushd "$TF_DIRECTORY" &>/dev/null
+		terraform apply
+	popd &>/dev/null
+}
+
+function infrastructure:ic:destroy()
+{
+	echo '--> Clean IC'
+	pushd "$TF_DIRECTORY" &>/dev/null
+		terraform destroy -force
+	popd &>/dev/null
+}

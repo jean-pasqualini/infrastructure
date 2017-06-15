@@ -1,0 +1,61 @@
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+
+	function console:error()
+	{
+		echo -e "\e[41m$1\e[0m"
+	}
+
+	function console:info()
+	{
+		echo -e "\e[44m$1\e[0m"
+	}
+
+	function console:success()
+	{
+		echo -e "\e[42m$1\e[0m"
+	}
+
+	function console:title()
+	{
+		echo -e "\n==================== \e[100m$1\e[0m =========================\n"
+	}
+
+else
+
+	function console:error()
+	{
+		echo "---> ERROR $1"
+	}
+
+	function console:info()
+	{
+		echo "---> INFO $1"
+	}
+
+	function console:success()
+	{
+		echo "---> SUCCESS $1"
+	}
+
+	function console:title()
+	{
+		echo "\n==================== $1 =========================\n"
+	}
+
+fi
+
+function check:tool:required()
+{
+	if ! which "$1" 1> /dev/null; then
+      console:error "$1 is not installed or not in your PATH"
+      console:info "$2"
+      exit 2
+    fi
+
+    console:info "Check $1 [OK]"
+}
+
+function exit:error()
+{
+	exit 2
+}

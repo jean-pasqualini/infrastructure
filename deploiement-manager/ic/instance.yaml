@@ -1,0 +1,15 @@
+resources:
+- name: integratin-continue-by-dm
+  type: compute.v1.instance
+  properties:
+    zone: europe-west-1
+    machineType: zones/europe-west1-b/machineTypes/n1-standard-1
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: ubuntu-1604-xenial-v20170610
+    networkInterfaces:
+    - network: global/networks/default

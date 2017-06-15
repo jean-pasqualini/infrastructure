@@ -1,0 +1,26 @@
+version: '2'
+services:
+  code:
+    image: ubuntu:latest
+    container_name: code
+    command: /bin/bash /code.sh
+    volumes:
+      - /var/www:/app
+      - ./code.sh:/code.sh
+  frontend:
+    image: nginx:latest
+    container_name: frontend
+    ports:
+      - 80:80
+    volumes_from:
+      - code
+    volumes:
+      - ./default.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - backend:backend
+  backend:
+    image: php:7.1-fpm
+    container_name: backend
+    volumes_from:
+      - code
+
