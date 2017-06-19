@@ -9,20 +9,46 @@ function infrastructure:unsuported()
 
 function infrastructure:install()
 {
-	if [[ "$OSTYPE" == "linux-gnu" ]]; then infrastructure:install:macos
-    elif [[ "$OSTYPE" == "darwin"* ]]; then infrastructure:install:linux
+    if [[ "$OSTYPE" == "linux-gnu" ]]; then infrastructure:install:linux
+    elif [[ "$OSTYPE" == "darwin"* ]]; then infrastructure:install:macos
     else infrastructure:unsuported
     fi
 }
 
 function infrastructure:install:macos()
 {
-	check:tool:required gcloud "Please install Gcloud SDK -- https://cloud.google.com/sdk/downloads"
-    sudo apt-get -y install terraform
+	check:tool:verify gcloud
+	if [[ "$?" == 2 ]]; then
+	    console:info "Install gcloud..."
+	    echo "Please install Gcloud SDK -- https://cloud.google.com/sdk/downloads"
+	    exit 2
+	fi
+
+	check:tool:verify terraform
+    if [[ "$?" == 2 ]]; then
+        console:info "Install terraform..."
+        brew install terraform
+        check:tool:required terraform "Unable to install terraform"
+    fi
 }
 
 function infrastructure:install:linux()
 {
-    check:tool:required gcloud "Please install Gcloud SDK -- https://cloud.google.com/sdk/downloads"
-    brew install terraform
+	check:tool:verify gcloud
+	if [[ "$?" == 2 ]]; then
+        console:confirmation "Install gcloud..." "Annulation de l'installation"
+	    export CLOUD_SDK_REPO="cloud-sdk-$(lsb_release -c -s)"
+	    echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+	    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+	    sudo apt-get update && sudo apt-get install google-cloud-sdk
+	    check:tool:required gcloud "Unable to install gcloud"
+	fi
+
+	check:tool:verify terraform
+    if [[ "$?" == 2 ]]; then
+        console:confirmation "Install terraform..." "Annulation de l'installation"
+        wget https://releases.hashicorp.com/terraform/0.9.8/terraform_0.9.8_linux_amd64.zip -O /tmp/terraform.zip
+        sudo unzip /tmp/terraform.zip -d /usr/local/bin
+        check:tool:required terraform "Unable to install terraform"
+    fi
 }

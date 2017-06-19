@@ -15,11 +15,6 @@ export \
 	TF_DIRECTORY \
 	TF_VAR_project_name
 
-if ! which terraform 1> /dev/null; then
-  console:error "terraform' is not installed or not in your PATH"
-  exit 2
-fi
-
 function infrastructure:ic:spawn()
 {
 	echo '--> Spawn IC'
@@ -33,5 +28,12 @@ function infrastructure:ic:destroy()
 	echo '--> Clean IC'
 	pushd "$TF_DIRECTORY" &>/dev/null
 		terraform destroy -force
+	popd &>/dev/null
+}
+
+function infrastructure:ic:show-ip()
+{
+	pushd "$TF_DIRECTORY" &>/dev/null
+		terraform output ip
 	popd &>/dev/null
 }

@@ -7,7 +7,7 @@
 **Infrastructure** is a demo project for solid platform on google cloud
 
 ### Usage
-
+* export `TF_VAR_domain="yourdomain"`
 * export `GOOGLE_APPLICATION_CREDENTIALS="/path/to/credentials.json"`
 * export `TF_VAR_project_name="your google cloud project name"`
 * make infrastructure-ci

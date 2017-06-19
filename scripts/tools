@@ -20,6 +20,16 @@ if [[ "$OSTYPE" == "linux-gnu" ]]; then
 		echo -e "\n==================== \e[100m$1\e[0m =========================\n"
 	}
 
+	function console:confirmation()
+	{
+	    echo -e "\e[7m$1 (O/N) ?\e[0m"
+	    read REPLY
+	    if [[ "$REPLY" != "O" ]]; then
+	        console:error "$2"
+	        exit 2
+	    fi
+	}
+
 else
 
 	function console:error()
@@ -42,13 +52,34 @@ else
 		echo "\n==================== $1 =========================\n"
 	}
 
+	function console:confirmation()
+	{
+	    echo -e "$1 (O/N) ?"
+	    read REPLY
+	    if [[ "$REPLY" != "O" ]]; then
+	        console:error "$2"
+	        exit 2
+	    fi
+	}
+
 fi
 
-function check:tool:required()
+function check:tool:verify()
 {
 	if ! which "$1" 1> /dev/null; then
       console:error "$1 is not installed or not in your PATH"
       console:info "$2"
+      return 2;
+    fi
+
+    console:info "Check $1 [OK]"
+    return 0;
+}
+
+function check:tool:required()
+{
+	if ! which "$1" 1> /dev/null; then
+      console:error "$2"
       exit 2
     fi
 

@@ -14,3 +14,8 @@ variable "project_name" {
   description = "The ID of the Google Cloud project"
   default = "run-melody"
 }
+
+variable "domain" {
+  description = "The domain name"
+  default = "local.io."
+}
