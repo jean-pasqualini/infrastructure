@@ -21,6 +21,9 @@ lint: ## Lint bash, Dockerfile, docker-compose.yml, terraform...
 	@echo '---> Lint bash'
 	@find . -name *.sh | xargs -I{} docker run --rm -i -w /mnt -v "${PWD}:/mnt" koalaman/shellcheck {}
 
+packer-build: ## Packer
+	@packer build -var "ssh_public_key='$(cat "${HOME}/.ssh/id_rsa.pub")'" ./packer/packer.json
+
 help:
 	@grep -E '^[a-zA-Z1-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| sort \
